@@ -5,12 +5,67 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const database_1 = __importDefault(require("./database"));
 const app = (0, express_1.default)();
 exports.app = app;
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
+});
+app.post('/api/auth/register', (req, res) => {
+    const { username, emailId, password } = req.body;
+    if (!username || !emailId || !password) {
+        return res.status(400).json({ message: 'Username, emailId and password are required.' });
+    }
+    const existingUser = database_1.default
+        .prepare('SELECT * FROM users WHERE emailId = ?')
+        .get(emailId);
+    if (existingUser) {
+        return res.status(409).json({ message: 'User already registered. Please login.' });
+    }
+    try {
+        const insert = database_1.default.prepare('INSERT INTO users (username, emailId, password) VALUES (?, ?, ?)');
+        const result = insert.run(username, emailId, password);
+        const createdUser = database_1.default
+            .prepare('SELECT id, username, emailId FROM users WHERE id = ?')
+            .get(result.lastInsertRowid);
+        return res.status(201).json({
+            message: 'User registered successfully',
+            user: createdUser,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'Unable to register user at the moment.' });
+    }
+});
+app.post('/api/auth/login', (req, res) => {
+    const { emailId, password } = req.body;
+    if (!emailId || !password) {
+        return res.status(400).json({ message: 'Email and password are required.' });
+    }
+    const user = database_1.default
+        .prepare('SELECT * FROM users WHERE emailId = ?')
+        .get(emailId);
+    if (!user) {
+        return res.status(404).json({
+            message: 'User is not registered. Please register first.',
+        });
+    }
+    if (user.password !== password) {
+        return res.status(401).json({
+            message: 'Incorrect password. Please try again.',
+        });
+    }
+    return res.status(200).json({
+        message: 'Login successful',
+        user: {
+            id: user.id,
+            username: user.username,
+            emailId: user.emailId,
+        },
+    });
 });
 app.get('/api/users', (_req, res) => {
     const users = database_1.default.prepare('SELECT * FROM users ORDER BY id DESC').all();

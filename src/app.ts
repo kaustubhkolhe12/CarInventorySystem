@@ -1,12 +1,88 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import db from './database';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
+});
+
+app.post('/api/auth/register', (req: Request, res: Response) => {
+  const { username, emailId, password } = req.body as {
+    username?: string;
+    emailId?: string;
+    password?: string;
+  };
+
+  if (!username || !emailId || !password) {
+    return res.status(400).json({ message: 'Username, emailId and password are required.' });
+  }
+
+  const existingUser = db
+    .prepare('SELECT * FROM users WHERE emailId = ?')
+    .get(emailId) as { id: number; username: string; emailId: string; password: string } | undefined;
+
+  if (existingUser) {
+    return res.status(409).json({ message: 'User already registered. Please login.' });
+  }
+
+  try {
+    const insert = db.prepare(
+      'INSERT INTO users (username, emailId, password) VALUES (?, ?, ?)'
+    );
+    const result = insert.run(username, emailId, password);
+
+    const createdUser = db
+      .prepare('SELECT id, username, emailId FROM users WHERE id = ?')
+      .get(result.lastInsertRowid) as { id: number; username: string; emailId: string };
+
+    return res.status(201).json({
+      message: 'User registered successfully',
+      user: createdUser,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to register user at the moment.' });
+  }
+});
+
+app.post('/api/auth/login', (req: Request, res: Response) => {
+  const { emailId, password } = req.body as {
+    emailId?: string;
+    password?: string;
+  };
+
+  if (!emailId || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
+  }
+
+  const user = db
+    .prepare('SELECT * FROM users WHERE emailId = ?')
+    .get(emailId) as { id: number; username: string; emailId: string; password: string } | undefined;
+
+  if (!user) {
+    return res.status(404).json({
+      message: 'User is not registered. Please register first.',
+    });
+  }
+
+  if (user.password !== password) {
+    return res.status(401).json({
+      message: 'Incorrect password. Please try again.',
+    });
+  }
+
+  return res.status(200).json({
+    message: 'Login successful',
+    user: {
+      id: user.id,
+      username: user.username,
+      emailId: user.emailId,
+    },
+  });
 });
 
 app.get('/api/users', (_req: Request, res: Response) => {
