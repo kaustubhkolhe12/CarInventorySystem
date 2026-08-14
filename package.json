@@ -1,54 +1,38 @@
 {
-  "name": "carinventorysystem",
+  "name": "car-dealership-inventory-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/server.js",
+  "description": "Full-stack Car Dealership Inventory Management System",
+  "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "tsx watch src/server.ts",
-    "dev:client": "vite --host 0.0.0.0",
-    "build": "tsc && vite build",
-    "start": "node dist/server.js",
-    "preview": "vite preview --host 0.0.0.0",
-    "test": "vitest run --config vitest.config.ts"
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "cd backend && npm test",
+    "start": "node backend/dist/server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaustubhkolhe12/CarInventorySystem.git"
   },
-  "keywords": [],
+  "keywords": [
+    "car",
+    "inventory",
+    "dealership",
+    "react",
+    "express",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/kaustubhkolhe12/CarInventorySystem/issues"
   },
   "homepage": "https://github.com/kaustubhkolhe12/CarInventorySystem#readme",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
-  },
   "devDependencies": {
-    "@types/cors": "^2.8.5",
-    "@types/express": "^5.0.6",
-    "@types/node": "^22.10.2",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
-    "@types/supertest": "^7.2.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^9.1.2",
-    "postcss": "^8.4.49",
-    "supertest": "^7.2.2",
-    "tailwindcss": "^3.4.17",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "tsx": "^4.23.12",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10",
-    "vitest": "^4.1.10"
+    "concurrently": "^9.1.2"
   }
 }

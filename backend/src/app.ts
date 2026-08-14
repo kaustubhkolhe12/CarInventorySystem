@@ -1,0 +1,32 @@
+/**
+ * Express Application Setup
+ * Configures middleware and mounts routes
+ * Implements proper separation of concerns
+ */
+
+import express from 'express';
+import cors from 'cors';
+import healthRoutes from './routes/health';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
+
+const app = express();
+
+// Middleware Configuration
+// Enable CORS for cross-origin requests from frontend
+app.use(cors());
+
+// Parse incoming JSON requests
+app.use(express.json());
+
+// Route Mounting
+// Health check endpoint for monitoring
+app.use('/health', healthRoutes);
+
+// Authentication endpoints (login, register)
+app.use('/api/auth', authRoutes);
+
+// User management endpoints (CRUD operations)
+app.use('/api/users', userRoutes);
+
+export { app };
