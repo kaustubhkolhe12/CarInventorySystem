@@ -11,6 +11,7 @@ export interface Vehicle {
   category: string;
   price: number;
   quantity: number;
+  image?: string | null;
 }
 
 export interface VehicleCreateInput {
@@ -19,6 +20,7 @@ export interface VehicleCreateInput {
   category: string;
   price: number;
   quantity: number;
+  image?: string | null;
 }
 
 export interface VehicleUpdateInput {
@@ -27,6 +29,7 @@ export interface VehicleUpdateInput {
   category?: string;
   price?: number;
   quantity?: number;
+  image?: string | null;
 }
 
 export interface VehicleSearchParams {

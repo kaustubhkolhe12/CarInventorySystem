@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { getUser } from './utils/storage';
+import { clearUser, getUser } from './utils/storage';
 import './index.css';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
@@ -27,7 +27,12 @@ const App = () => {
    * Listens for storage changes from other tabs
    */
   useEffect(() => {
-    // Check for existing user session
+    const shouldForceLoginScreen = window.location.pathname === '/' || window.location.pathname === '/login';
+
+    if (shouldForceLoginScreen) {
+      clearUser();
+    }
+
     const checkUser = () => {
       const storedUser = getUser();
       setUser(storedUser);
@@ -36,11 +41,9 @@ const App = () => {
 
     checkUser();
 
-    // Listen for storage changes from other tabs/windows
     const handleStorageChange = () => checkUser();
     window.addEventListener('storage', handleStorageChange);
 
-    // Cleanup listener on unmount
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
@@ -61,13 +64,7 @@ const App = () => {
         {/* Home Page - Redirect to dashboard if logged in, else show auth */}
         <Route
           path="/"
-          element={
-            user ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <AuthPage onLoginSuccess={(loggedInUser) => setUser(loggedInUser)} />
-            )
-          }
+          element={<Navigate to="/login" replace />}
         />
 
         {/* Login Page */}

@@ -51,14 +51,15 @@ class VehicleRepository {
   }
 
   create(vehicleData: VehicleCreateInput): Vehicle {
-    const { make, model, category, price, quantity } = vehicleData;
+    const { make, model, category, price, quantity, image } = vehicleData;
     const result = db.run(
-      'INSERT INTO vehicles (make, model, category, price, quantity) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO vehicles (make, model, category, price, quantity, image) VALUES (?, ?, ?, ?, ?, ?)',
       make,
       model,
       category,
       Number(price),
-      Number(quantity)
+      Number(quantity),
+      image ?? null
     );
 
     const createdVehicle = this.findById(result.lastInsertRowid);
@@ -80,14 +81,16 @@ class VehicleRepository {
     const updatedCategory = updates.category ?? existingVehicle.category;
     const updatedPrice = updates.price ?? existingVehicle.price;
     const updatedQuantity = updates.quantity ?? existingVehicle.quantity;
+    const updatedImage = updates.image ?? existingVehicle.image ?? null;
 
     const result = db.run(
-      'UPDATE vehicles SET make = ?, model = ?, category = ?, price = ?, quantity = ? WHERE id = ?',
+      'UPDATE vehicles SET make = ?, model = ?, category = ?, price = ?, quantity = ?, image = ? WHERE id = ?',
       updatedMake,
       updatedModel,
       updatedCategory,
       Number(updatedPrice),
       Number(updatedQuantity),
+      updatedImage,
       id
     );
 

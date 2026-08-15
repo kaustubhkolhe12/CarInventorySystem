@@ -63,9 +63,57 @@ const initializeDatabase = async () => {
       model TEXT NOT NULL,
       category TEXT NOT NULL,
       price REAL NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 0
+      quantity INTEGER NOT NULL DEFAULT 0,
+      image TEXT
     );
   `);
+
+  const vehicleColumns = connection.prepare('PRAGMA table_info(vehicles)').all() as Array<{ name: string }>;
+  const hasImageColumn = vehicleColumns.some((column) => column.name === 'image');
+
+  if (!hasImageColumn) {
+    connection.exec('ALTER TABLE vehicles ADD COLUMN image TEXT;');
+  }
+
+  const defaultVehicles = [
+    ['Toyota', 'Corolla', 'Sedan', 24999, 7],
+    ['Honda', 'Civic', 'Sedan', 26999, 5],
+    ['Ford', 'Mustang', 'Coupe', 39999, 3],
+    ['BMW', '3 Series', 'Luxury', 49999, 4],
+    ['Mercedes', 'C-Class', 'Luxury', 52999, 2],
+    ['Tesla', 'Model 3', 'Electric', 42999, 6],
+    ['Nissan', 'Altima', 'Sedan', 28999, 8],
+    ['Chevrolet', 'Camaro', 'Coupe', 38999, 2],
+    ['Audi', 'A4', 'Luxury', 47999, 5],
+    ['Jeep', 'Wrangler', 'SUV', 45999, 4],
+    ['Hyundai', 'Tucson', 'SUV', 31999, 9],
+    ['Kia', 'Sportage', 'SUV', 32999, 7],
+    ['Volkswagen', 'Golf', 'Hatchback', 27999, 6],
+    ['Mazda', 'CX-5', 'SUV', 33999, 5],
+    ['Subaru', 'Outback', 'SUV', 36999, 4],
+    ['Lexus', 'RX 350', 'Luxury', 55999, 3],
+    ['Porsche', '911', 'Sport', 74999, 2],
+    ['Ford', 'Explorer', 'SUV', 41999, 3],
+    ['Toyota', 'RAV4', 'SUV', 34999, 8],
+    ['Mercedes', 'GLA', 'Luxury', 50999, 2],
+    ['Honda', 'Accord', 'Sedan', 29999, 7],
+    ['Volvo', 'XC60', 'SUV', 46999, 4],
+    ['Mini', 'Cooper', 'Hatchback', 31999, 5],
+    ['Tesla', 'Model Y', 'Electric', 51999, 6],
+    ['Audi', 'Q5', 'Luxury', 53999, 3],
+    ['Range Rover', 'Velar', 'Luxury', 58999, 2],
+  ] as const;
+
+  const vehicleCount = connection.prepare('SELECT COUNT(*) as count FROM vehicles').get() as { count: number };
+  if (vehicleCount.count === 0) {
+    const insertVehicle = connection.prepare(
+      'INSERT INTO vehicles (make, model, category, price, quantity) VALUES (?, ?, ?, ?, ?)'
+    );
+
+    defaultVehicles.forEach(([make, model, category, price, quantity]) => {
+      insertVehicle.run(make, model, category, price, quantity);
+    });
+  }
 
   return connection;
 };

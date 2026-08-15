@@ -41,8 +41,8 @@ class UserController {
    */
   searchByEmail = (req: Request, res: Response): void => {
     try {
-      const { keyword } = req.params;
-      const users = userService.searchUsersByEmail(keyword);
+      const keyword = Array.isArray(req.params.keyword) ? req.params.keyword[0] : req.params.keyword;
+      const users = userService.searchUsersByEmail(keyword || '');
       res.status(200).json(users);
     } catch (error) {
       this.handleError(error, res);

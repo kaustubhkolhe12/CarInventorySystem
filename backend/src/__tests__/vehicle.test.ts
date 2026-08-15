@@ -8,6 +8,43 @@ import { describe, expect, it } from 'vitest';
 import { app } from '../app';
 
 describe('Vehicle inventory API', () => {
+  it('ensures the catalog contains at least 25 default vehicles after startup', async () => {
+    const response = await request(app)
+      .get('/api/vehicles')
+      .set('x-user-email', 'kaustubhkolhe12@gmail.com');
+
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('seeds 25 default vehicles into the catalog when the database is empty', async () => {
+    const response = await request(app)
+      .get('/api/vehicles')
+      .set('x-user-email', 'kaustubhkolhe12@gmail.com');
+
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('stores and returns vehicle image URLs when creating a vehicle', async () => {
+    const adminEmail = 'kaustubhkolhe12@gmail.com';
+
+    const createResponse = await request(app)
+      .post('/api/vehicles')
+      .set('x-user-email', adminEmail)
+      .send({
+        make: 'Mazda',
+        model: 'MX-5',
+        category: 'Convertible',
+        price: 33000,
+        quantity: 4,
+        image: 'https://example.com/mazda.jpg',
+      });
+
+    expect(createResponse.status).toBe(201);
+    expect(createResponse.body.image).toBe('https://example.com/mazda.jpg');
+  });
+
   it('adds, lists, searches, updates, purchases, restocks, and deletes vehicles', async () => {
     const adminEmail = 'kaustubhkolhe12@gmail.com';
 

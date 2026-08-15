@@ -17,8 +17,9 @@ const app = express();
 // Enable CORS for cross-origin requests from frontend
 app.use(cors());
 
-// Parse incoming JSON requests
-app.use(express.json());
+// Parse incoming JSON requests with a larger limit for base64 image uploads
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Route Mounting
 // Health check endpoint for monitoring
