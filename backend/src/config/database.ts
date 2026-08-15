@@ -39,9 +39,22 @@ const initializeDatabase = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL,
       emailId TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
+      password TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user'
     );
   `);
+
+  const columns = connection.prepare('PRAGMA table_info(users)').all() as Array<{ name: string }>;
+  const hasRoleColumn = columns.some((column) => column.name === 'role');
+
+  if (!hasRoleColumn) {
+    connection.exec('ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT "user";');
+  }
+
+  const insertDefaultAdmin = connection.prepare(
+    'INSERT OR IGNORE INTO users (username, emailId, password, role) VALUES (?, ?, ?, ?)'
+  );
+  insertDefaultAdmin.run('Admin', 'kaustubhkolhe12@gmail.com', 'Admin@123', 'admin');
 
   return connection;
 };

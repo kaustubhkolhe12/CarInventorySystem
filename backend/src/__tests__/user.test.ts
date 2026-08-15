@@ -62,4 +62,31 @@ describe('Car dealership inventory API', () => {
     expect(deleteResponse.status).toBe(200);
     expect(deleteResponse.body.message).toBe('User deleted successfully');
   });
+
+  it('allows the admin account to add another admin by email', async () => {
+    const adminEmail = 'kaustubhkolhe12@gmail.com';
+    const newAdminEmail = `admin-${Date.now()}@dealership.com`;
+
+    const registerResponse = await request(app)
+      .post('/api/auth/register')
+      .send({
+        username: 'new-admin-user',
+        emailId: newAdminEmail,
+        password: 'secure-pass',
+      });
+
+    expect(registerResponse.status).toBe(201);
+
+    const response = await request(app)
+      .post('/api/users/admin')
+      .send({
+        adminEmail,
+        emailId: newAdminEmail,
+        username: 'new-admin-user',
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body.role).toBe('admin');
+    expect(response.body.emailId).toBe(newAdminEmail);
+  });
 });

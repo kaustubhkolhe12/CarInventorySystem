@@ -55,8 +55,18 @@ class UserController {
    */
   create = (req: Request, res: Response): void => {
     try {
-      const { username, emailId, password } = req.body;
-      const user = userService.createUser({ username, emailId, password });
+      const { username, emailId, password, role } = req.body;
+      const user = userService.createUser({ username, emailId, password, role });
+      res.status(201).json(user);
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+
+  addAdmin = (req: Request, res: Response): void => {
+    try {
+      const { adminEmail, emailId, username, password } = req.body;
+      const user = userService.addAdmin(adminEmail, emailId, username, password);
       res.status(201).json(user);
     } catch (error) {
       this.handleError(error, res);
@@ -105,6 +115,8 @@ class UserController {
       res.status(404).json({ message: errorMessage });
     } else if (errorMessage.includes('already exists')) {
       res.status(409).json({ message: errorMessage });
+    } else if (errorMessage.includes('Only admins')) {
+      res.status(403).json({ message: errorMessage });
     } else {
       res.status(500).json({ message: 'Unable to process user request.' });
     }

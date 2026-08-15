@@ -29,7 +29,7 @@ class AuthService {
     }
 
     // Create the user
-    const createdUser = userRepository.create(userData);
+    const createdUser = userRepository.create({ ...userData, role: userData.role ?? 'user' });
 
     // Return user without password
     return this.sanitizeUser(createdUser);
@@ -73,6 +73,7 @@ class AuthService {
       id: user.id,
       username: user.username,
       emailId: user.emailId,
+      role: user.role,
     };
   }
 }

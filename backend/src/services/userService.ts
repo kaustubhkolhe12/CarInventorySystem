@@ -61,7 +61,33 @@ class UserService {
     }
 
     // Create the user
-    return userRepository.create(userData);
+    return userRepository.create({ ...userData, role: userData.role ?? 'user' });
+  }
+
+  addAdmin(adminEmail: string, targetEmail: string, username: string, password?: string): User {
+    if (!adminEmail || !targetEmail || !username) {
+      throw new Error('Admin email, target email and username are required.');
+    }
+
+    const requester = userRepository.findByEmail(adminEmail);
+    if (!requester || requester.role !== 'admin') {
+      throw new Error('Only admins can add new admins.');
+    }
+
+    const existingUser = userRepository.findByEmail(targetEmail);
+    if (existingUser) {
+      const updatedUser = userRepository.update(existingUser.id, { role: 'admin' });
+      return updatedUser;
+    }
+
+    const generatedPassword = password || 'Admin@123';
+
+    return userRepository.create({
+      username,
+      emailId: targetEmail,
+      password: generatedPassword,
+      role: 'admin',
+    });
   }
 
   /**

@@ -4,9 +4,10 @@
  * Centralizes API communication for maintainability and error handling
  */
 
-import type { AuthResponse, AuthFormData } from '../types/auth';
+import type { AuthResponse, AuthFormData, AdminCreatePayload, User } from '../types/auth';
 
 const API_URL = 'http://localhost:3000/api/auth';
+const USERS_API_URL = 'http://localhost:3000/api/users';
 
 /**
  * Register a new user
@@ -49,6 +50,21 @@ export const loginUser = async (
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Login failed');
+  }
+
+  return response.json();
+};
+
+export const addAdminUser = async (payload: AdminCreatePayload): Promise<User> => {
+  const response = await fetch(`${USERS_API_URL}/admin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to add admin');
   }
 
   return response.json();

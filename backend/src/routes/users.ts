@@ -14,6 +14,9 @@ router.get('/', userController.getAll);
 /** POST /api/users - Create a new user */
 router.post('/', userController.create);
 
+/** POST /api/users/admin - Promote an existing user or create a new admin */
+router.post('/admin', userController.addAdmin);
+
 /** GET /api/users/email/:keyword - Search users by email */
 router.get('/email/:keyword', userController.searchByEmail);
 

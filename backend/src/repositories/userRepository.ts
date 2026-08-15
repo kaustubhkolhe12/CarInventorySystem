@@ -52,12 +52,13 @@ class UserRepository {
    * @returns Created user object with ID
    */
   create(userData: UserCreateInput): User {
-    const { username, emailId, password } = userData;
+    const { username, emailId, password, role = 'user' } = userData;
     const result = db.run(
-      'INSERT INTO users (username, emailId, password) VALUES (?, ?, ?)',
+      'INSERT INTO users (username, emailId, password, role) VALUES (?, ?, ?, ?)',
       username,
       emailId,
-      password
+      password,
+      role
     );
 
     const createdUser = this.findById(result.lastInsertRowid);
@@ -83,12 +84,14 @@ class UserRepository {
     const updatedUsername = updates.username ?? existingUser.username;
     const updatedEmailId = updates.emailId ?? existingUser.emailId;
     const updatedPassword = updates.password ?? existingUser.password;
+    const updatedRole = updates.role ?? existingUser.role;
 
     const result = db.run(
-      'UPDATE users SET username = ?, emailId = ?, password = ? WHERE id = ?',
+      'UPDATE users SET username = ?, emailId = ?, password = ?, role = ? WHERE id = ?',
       updatedUsername,
       updatedEmailId,
       updatedPassword,
+      updatedRole,
       id
     );
 
