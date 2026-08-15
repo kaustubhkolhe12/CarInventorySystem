@@ -34,5 +34,8 @@
   "homepage": "https://github.com/kaustubhkolhe12/CarInventorySystem#readme",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "all": "^0.0.0"
   }
 }

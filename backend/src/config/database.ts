@@ -56,6 +56,17 @@ const initializeDatabase = async () => {
   );
   insertDefaultAdmin.run('Admin', 'kaustubhkolhe12@gmail.com', 'Admin@123', 'admin');
 
+  connection.exec(`
+    CREATE TABLE IF NOT EXISTS vehicles (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      make TEXT NOT NULL,
+      model TEXT NOT NULL,
+      category TEXT NOT NULL,
+      price REAL NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 0
+    );
+  `);
+
   return connection;
 };
 

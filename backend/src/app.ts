@@ -9,6 +9,7 @@ import cors from 'cors';
 import healthRoutes from './routes/health';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
+import vehicleRoutes from './routes/vehicles';
 
 const app = express();
 
@@ -28,5 +29,8 @@ app.use('/api/auth', authRoutes);
 
 // User management endpoints (CRUD operations)
 app.use('/api/users', userRoutes);
+
+// Vehicle inventory endpoints
+app.use('/api/vehicles', vehicleRoutes);
 
 export { app };
