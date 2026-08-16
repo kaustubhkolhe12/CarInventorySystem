@@ -2,7 +2,25 @@
 
 A comprehensive full-stack car dealership inventory management system built with TypeScript, Node.js, React, and Vite.
 
-## 🚀 Quick Start for Users
+## � Table of Contents
+
+- [🚀 Quick Start for Users](#-quick-start-for-users)
+- [📋 Overview](#-overview)
+- [👨‍💻 Developer Setup](#-developer-setup)
+  - [Project Structure](#project-structure)
+  - [Tech Stack](#tech-stack)
+  - [Installation for Development](#installation-for-development)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [My AI Usage](#my-ai-usage)
+- [Configuration Files](#configuration-files)
+- [Development Workflow](#development-workflow)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## �🚀 Quick Start for Users
 
 ### How to Run the Application
 
