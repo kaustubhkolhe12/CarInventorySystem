@@ -66,11 +66,14 @@ This is a web-based inventory management system designed for car dealerships. It
 ### Features
 
 - **Vehicle Inventory Management**: Add, update, delete, and view vehicles
+<img width="1510" height="900" alt="Admin Dashboard 1" src="https://github.com/user-attachments/assets/0f2385da-460e-4c11-8557-457a679eecdb" />
+
 - **User Authentication**: Secure login and registration system
 - **User Management**: Manage user accounts and permissions
 - **Dashboard**: Central hub for viewing inventory metrics
 - **Responsive Design**: Mobile-friendly interface
 - **Type Safety**: Full TypeScript implementation across the stack
+
 
 ---
 
