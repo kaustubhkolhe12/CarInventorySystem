@@ -2,11 +2,63 @@
 
 A comprehensive full-stack car dealership inventory management system built with TypeScript, Node.js, React, and Vite.
 
-## Overview
+## 🚀 Quick Start for Users
 
-This project is a web-based inventory management system designed for car dealerships. It provides tools for managing vehicle inventory, user authentication, and inventory tracking with a modern, responsive user interface.
+### How to Run the Application
 
-## Project Structure
+#### Prerequisites
+- Node.js (v16 or higher) - [Download here](https://nodejs.org/)
+- npm (comes with Node.js)
+
+#### Step 1: Install Dependencies
+```bash
+npm install
+```
+
+This command installs all required packages for both the frontend and backend.
+
+#### Step 2: Start the Application
+```bash
+npm run dev
+```
+
+The application will automatically start:
+- **Frontend** (User Interface): `http://localhost:5173`
+- **Backend** (API Server): `http://localhost:3000`
+
+#### Step 3: Open in Browser
+Open your web browser and navigate to `http://localhost:5173` to access the Car Inventory System.
+
+#### Features Available
+- ✅ **Login/Register**: Create an account or login with existing credentials
+- ✅ **View Vehicles**: Browse all vehicles in the inventory
+- ✅ **Manage Inventory**: Add, edit, or remove vehicles from inventory
+- ✅ **Dashboard**: View inventory metrics and statistics
+- ✅ **User Management**: Manage user accounts (for administrators)
+
+#### Stopping the Application
+Press `Ctrl + C` in the terminal to stop the server.
+
+---
+
+## 📋 Overview
+
+This is a web-based inventory management system designed for car dealerships. It provides tools for managing vehicle inventory, user authentication, and inventory tracking with a modern, responsive user interface.
+
+### Features
+
+- **Vehicle Inventory Management**: Add, update, delete, and view vehicles
+- **User Authentication**: Secure login and registration system
+- **User Management**: Manage user accounts and permissions
+- **Dashboard**: Central hub for viewing inventory metrics
+- **Responsive Design**: Mobile-friendly interface
+- **Type Safety**: Full TypeScript implementation across the stack
+
+---
+
+## 👨‍💻 Developer Setup
+
+### Project Structure
 
 ```
 ├── backend/              # Node.js/Express backend
@@ -32,38 +84,31 @@ This project is a web-based inventory management system designed for car dealers
 └── package.json          # Root workspace configuration
 ```
 
-## Tech Stack
+### Tech Stack
 
-### Backend
+#### Backend
 - **Runtime**: Node.js
 - **Language**: TypeScript
 - **Framework**: Express.js
 - **Database**: SQL-based (configured in `config/database.ts`)
 - **Testing**: Vitest
 
-### Frontend
+#### Frontend
 - **Framework**: React 18
 - **Language**: TypeScript
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS
 - **Package Manager**: npm
 
-## Features
+### Installation for Development
 
-- **Vehicle Inventory Management**: Add, update, delete, and view vehicles
-- **User Authentication**: Secure login and registration system
-- **User Management**: Manage user accounts and permissions
-- **Dashboard**: Central hub for viewing inventory metrics
-- **Responsive Design**: Mobile-friendly interface
-- **Type Safety**: Full TypeScript implementation across the stack
+#### Root Level Setup
+```bash
+npm install        # Install dependencies for both frontend and backend
+npm run dev        # Start both servers in development mode
+```
 
-## Installation & Setup
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-
-### Backend Setup
+#### Backend Development Setup
 ```bash
 cd backend
 npm install
@@ -72,18 +117,12 @@ npm test           # Run tests
 npm run build      # Build for production
 ```
 
-### Frontend Setup
+#### Frontend Development Setup
 ```bash
 cd frontend
 npm install
 npm run dev        # Start development server
 npm run build      # Build for production
-```
-
-### Root Level Commands
-```bash
-npm install        # Install dependencies for both frontend and backend
-npm run dev        # Start both servers in development mode
 ```
 
 ## API Endpoints
