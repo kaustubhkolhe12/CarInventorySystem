@@ -65,12 +65,18 @@ This is a web-based inventory management system designed for car dealerships. It
 
 ### Features
 
+- **User Authentication**: Secure login and registration system
+<img width="1907" height="915" alt="Register" src="https://github.com/user-attachments/assets/87f43b64-09a8-43bb-9b44-27a8a5c4cc25" />
+<img width="1907" height="920" alt="Login" src="https://github.com/user-attachments/assets/89dcf4b0-fc17-430c-bb58-aaf80e7b4e00" />
 - **Vehicle Inventory Management**: Add, update, delete, and view vehicles
 <img width="1510" height="900" alt="Admin Dashboard 1" src="https://github.com/user-attachments/assets/0f2385da-460e-4c11-8557-457a679eecdb" />
-
-- **User Authentication**: Secure login and registration system
+<img width="1312" height="852" alt="Admin dashboard car details " src="https://github.com/user-attachments/assets/ead8cadb-6948-471c-9fce-58d303f223aa" />
+- **User Dashboard**: 
+<img width="1153" height="870" alt="User Dashboard" src="https://github.com/user-attachments/assets/6bf51074-21d8-47d8-9c0a-e471f870885a" />
 - **User Management**: Manage user accounts and permissions
+<img width="1298" height="190" alt="Admin management" src="https://github.com/user-attachments/assets/fd2b2944-9391-4691-bbc3-dbda7f167213" />
 - **Dashboard**: Central hub for viewing inventory metrics
+<img width="1153" height="870" alt="User Dashboard" src="https://github.com/user-attachments/assets/3e4b01a4-a3f5-4529-a706-12875487c578" />
 - **Responsive Design**: Mobile-friendly interface
 - **Type Safety**: Full TypeScript implementation across the stack
 
