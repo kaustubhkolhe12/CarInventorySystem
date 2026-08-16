@@ -74,18 +74,18 @@ This is a web-based inventory management system designed for car dealerships. It
 - **Username and Password Validation:**
 <img width="468" height="501" alt="image" src="https://github.com/user-attachments/assets/0e55cfb1-d1f0-439f-84c2-eaee0ac03c0b" />
 
-- **Duplicate Registration:**
+- **Duplicate Registration:** Showing error if user is already registered
 <img width="468" height="578" alt="image" src="https://github.com/user-attachments/assets/aab215e0-5998-4c44-aa6b-1bd640e6942d" />
 
-- **Vehicle Inventory Management**: Add, update, delete, and view vehicles
+- **Vehicle Inventory Management**: Admin can add, update, delete, and view vehicles
 <img width="1510" height="900" alt="Admin Dashboard 1" src="https://github.com/user-attachments/assets/0f2385da-460e-4c11-8557-457a679eecdb" />
 
 <img width="1312" height="852" alt="Admin dashboard car details " src="https://github.com/user-attachments/assets/ead8cadb-6948-471c-9fce-58d303f223aa" />
 
-- **User Dashboard**: 
+- **User Dashboard**:  User can see all vehicles lists and purchase.
 <img width="1153" height="870" alt="User Dashboard" src="https://github.com/user-attachments/assets/6bf51074-21d8-47d8-9c0a-e471f870885a" />
 
-- **User Management**: Manage user accounts and permissions
+- **User Management**: Admin can make new users as admin to add, update and delete new car details.
 <img width="1298" height="190" alt="Admin management" src="https://github.com/user-attachments/assets/fd2b2944-9391-4691-bbc3-dbda7f167213" />
 
 - **Dashboard**: Central hub for viewing inventory metrics
