@@ -83,14 +83,14 @@ This is a web-based inventory management system designed for car dealerships. It
 <img width="1312" height="852" alt="Admin dashboard car details " src="https://github.com/user-attachments/assets/ead8cadb-6948-471c-9fce-58d303f223aa" />
 
 - **User Dashboard**:  
-  1.User can see all vehicles lists and purchase option as well
+  1.User can see all vehicles lists and purchase option as well.
   2. Cars Stocks(Out of stocks will also be shown)
 <img width="1153" height="870" alt="User Dashboard" src="https://github.com/user-attachments/assets/6bf51074-21d8-47d8-9c0a-e471f870885a" />
 
 - **Filter Option**: User can search car by make, model name, and Prices.
 <img width="1290" height="631" alt="image" src="https://github.com/user-attachments/assets/40f145af-06b3-415a-a201-05717a347f22" />
 
-- **User Management**: Admin can make new users as admin to add, update and delete new car details.
+- **User Management**: Admin can make new users as admin to give permissions of add, update and delete new car details.
 <img width="1298" height="190" alt="Admin management" src="https://github.com/user-attachments/assets/fd2b2944-9391-4691-bbc3-dbda7f167213" />
 
 ---
