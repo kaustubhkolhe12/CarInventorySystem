@@ -195,6 +195,7 @@ npm run test              # Run all tests
 npm run test:watch      # Run tests in watch mode
 npm run test:coverage   # Generate coverage report
 ```
+<img width="1313" height="586" alt="Backend test coverage" src="https://github.com/user-attachments/assets/97a17ce5-f780-4130-b204-1bca4ae5cd64" />
 
 ## My AI Usage
 
