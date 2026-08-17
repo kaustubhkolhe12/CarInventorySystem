@@ -2,8 +2,19 @@ import request from 'supertest';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { app } from '../app';
 import db from '../config/database';
+import { generateToken } from '../utils/jwtUtils';
 
-const adminEmail = 'kaustubhkolhe12@gmail.com';
+const adminUser = {
+  id: 1,
+  emailId: 'kaustubhkolhe12@gmail.com',
+  role: 'admin' as const,
+};
+
+// Helper to get authorization header with JWT token
+const getAuthHeader = () => {
+  const token = generateToken(adminUser);
+  return `Bearer ${token}`;
+};
 
 describe('TDD inventory backend behaviors', () => {
   beforeEach(() => {
@@ -13,7 +24,7 @@ describe('TDD inventory backend behaviors', () => {
   it('rejects vehicle creation without required fields', async () => {
     const response = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'BMW',
         model: 'X5',
@@ -31,7 +42,7 @@ describe('TDD inventory backend behaviors', () => {
 
     const response = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'BMW',
         model: 'X5',
@@ -49,7 +60,7 @@ describe('TDD inventory backend behaviors', () => {
   it('lists all vehicles in descending order of creation', async () => {
     await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Audi',
         model: 'A4',
@@ -60,7 +71,7 @@ describe('TDD inventory backend behaviors', () => {
 
     await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Mercedes',
         model: 'C-Class',
@@ -71,7 +82,7 @@ describe('TDD inventory backend behaviors', () => {
 
     const response = await request(app)
       .get('/api/vehicles')
-      .set('x-user-email', adminEmail);
+      .set('Authorization', getAuthHeader());
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
@@ -82,7 +93,7 @@ describe('TDD inventory backend behaviors', () => {
   it('updates stock quantity and records the new total after purchase', async () => {
     const createResponse = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Tesla',
         model: 'Model 3',
@@ -93,7 +104,7 @@ describe('TDD inventory backend behaviors', () => {
 
     const purchaseResponse = await request(app)
       .post(`/api/vehicles/${createResponse.body.id}/purchase`)
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({ quantity: 2 });
 
     expect(purchaseResponse.status).toBe(200);
@@ -103,7 +114,7 @@ describe('TDD inventory backend behaviors', () => {
   it('prevents purchase beyond available stock', async () => {
     const createResponse = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Honda',
         model: 'Civic',
@@ -114,10 +125,10 @@ describe('TDD inventory backend behaviors', () => {
 
     const response = await request(app)
       .post(`/api/vehicles/${createResponse.body.id}/purchase`)
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({ quantity: 2 });
 
     expect(response.status).toBe(409);
-    expect(response.body.message).toBe('Requested quantity exceeds available stock.');
+    expect(response.body.message).toBe('Requested quantity exceeds available stock. Available: 1, Requested: 2');
   });
 });

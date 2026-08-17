@@ -68,10 +68,9 @@ class VehicleService {
         if (!Number.isFinite(requestedQuantity) || requestedQuantity <= 0) {
             throw new Error('Purchase quantity must be greater than zero.');
         }
-        if (requestedQuantity > vehicle.quantity) {
-            throw new Error('Requested quantity exceeds available stock.');
-        }
-        return vehicleRepository_1.default.update(id, { quantity: vehicle.quantity - requestedQuantity });
+        // Use atomic purchase to prevent race conditions
+        // This ensures no two concurrent purchases can oversell
+        return vehicleRepository_1.default.purchaseAtomic(id, requestedQuantity);
     }
     restockVehicle(userEmail, id, quantity) {
         this.ensureAdmin(userEmail, 'restock vehicle');
@@ -80,7 +79,8 @@ class VehicleService {
         if (!Number.isFinite(restockQuantity) || restockQuantity <= 0) {
             throw new Error('Restock quantity must be greater than zero.');
         }
-        return vehicleRepository_1.default.update(id, { quantity: vehicle.quantity + restockQuantity });
+        // Use atomic restock operation
+        return vehicleRepository_1.default.restockAtomic(id, restockQuantity);
     }
     ensureAuthorizedUser(userEmail, action) {
         if (!userEmail) {

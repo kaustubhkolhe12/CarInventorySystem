@@ -2,6 +2,7 @@
 /**
  * Vehicle Controller
  * Handles HTTP requests for vehicle inventory operations
+ * Uses JWT authentication via middleware
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -12,8 +13,8 @@ class VehicleController {
     constructor() {
         this.getAll = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
-                vehicleService_1.default.getAllVehicles();
+                // User email from JWT token (verified by middleware)
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -26,7 +27,7 @@ class VehicleController {
         };
         this.search = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -46,7 +47,7 @@ class VehicleController {
         };
         this.create = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -60,7 +61,7 @@ class VehicleController {
         };
         this.update = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -75,7 +76,7 @@ class VehicleController {
         };
         this.delete = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -90,7 +91,7 @@ class VehicleController {
         };
         this.purchase = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;
@@ -106,7 +107,7 @@ class VehicleController {
         };
         this.restock = (req, res) => {
             try {
-                const userEmail = req.headers['x-user-email'];
+                const userEmail = req.user?.emailId;
                 if (!userEmail) {
                     res.status(401).json({ message: 'User authentication required.' });
                     return;

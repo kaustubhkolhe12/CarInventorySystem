@@ -1,5 +1,6 @@
 /**
  * Vehicle API service for frontend dashboard interactions
+ * Uses JWT tokens for authentication
  */
 
 import type { Vehicle, VehicleFormState } from '../types/vehicle';
@@ -21,24 +22,19 @@ const parseJsonResponse = async <T>(response: Response): Promise<T> => {
   throw new Error(text.slice(0, 200));
 };
 
-const getUserEmail = () => {
-  const stored = localStorage.getItem('car_dealership_user');
-  if (!stored) return '';
-
-  try {
-    const user = JSON.parse(stored);
-    return user?.emailId || '';
-  } catch {
-    return '';
-  }
+const getAuthToken = () => {
+  const stored = localStorage.getItem('car_dealership_token');
+  return stored || '';
 };
+
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${getAuthToken()}`,
+});
 
 export const fetchVehicles = async (): Promise<Vehicle[]> => {
   const response = await fetch(API_URL, {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -63,10 +59,7 @@ export const searchVehicles = async (params: Record<string, string | number | un
   });
 
   const response = await fetch(`${API_URL}/search?${query.toString()}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -84,10 +77,7 @@ export const searchVehicles = async (params: Record<string, string | number | un
 export const createVehicle = async (payload: VehicleFormState): Promise<Vehicle> => {
   const response = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({
       make: payload.make,
       model: payload.model,
@@ -113,10 +103,7 @@ export const createVehicle = async (payload: VehicleFormState): Promise<Vehicle>
 export const updateVehicle = async (id: number, payload: VehicleFormState): Promise<Vehicle> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({
       make: payload.make,
       model: payload.model,
@@ -142,10 +129,7 @@ export const updateVehicle = async (id: number, payload: VehicleFormState): Prom
 export const deleteVehicle = async (id: number): Promise<void> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -161,10 +145,7 @@ export const deleteVehicle = async (id: number): Promise<void> => {
 export const purchaseVehicle = async (id: number, quantity: number): Promise<Vehicle> => {
   const response = await fetch(`${API_URL}/${id}/purchase`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ quantity }),
   });
 
@@ -183,10 +164,7 @@ export const purchaseVehicle = async (id: number, quantity: number): Promise<Veh
 export const restockVehicle = async (id: number, quantity: number): Promise<Vehicle> => {
   const response = await fetch(`${API_URL}/${id}/restock`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': getUserEmail(),
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ quantity }),
   });
 

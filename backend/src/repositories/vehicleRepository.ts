@@ -1,6 +1,7 @@
 /**
  * Vehicle Repository
  * Handles all database operations related to vehicles
+ * Implements atomic purchases to prevent race conditions
  */
 
 import db from '../config/database';
@@ -109,6 +110,76 @@ class VehicleRepository {
   delete(id: number): number {
     const result = db.run('DELETE FROM vehicles WHERE id = ?', id);
     return result.changes;
+  }
+
+  /**
+   * Atomically purchase a vehicle by decrementing quantity
+   * This prevents race conditions where two purchases could happen simultaneously
+   * The UPDATE only succeeds if quantity >= requestedQuantity
+   * 
+   * @param id - Vehicle ID
+   * @param quantity - Quantity to purchase
+   * @returns Updated vehicle if successful
+   * @throws Error if insufficient stock
+   */
+  purchaseAtomic(id: number, quantity: number): Vehicle {
+    // Atomic UPDATE: Only decrement if quantity is sufficient
+    // This ensures no two users can oversell the same vehicle
+    const result = db.run(
+      `UPDATE vehicles 
+       SET quantity = quantity - ? 
+       WHERE id = ? AND quantity >= ?`,
+      Number(quantity),
+      id,
+      Number(quantity)
+    );
+
+    // If changes == 0, either vehicle not found or insufficient stock
+    if (result.changes === 0) {
+      const vehicle = this.findById(id);
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+      // Vehicle exists but stock insufficient
+      throw new Error(`Requested quantity exceeds available stock. Available: ${vehicle.quantity}, Requested: ${quantity}`);
+    }
+
+    const updatedVehicle = this.findById(id);
+    if (!updatedVehicle) {
+      throw new Error('Vehicle not found after purchase');
+    }
+
+    return updatedVehicle;
+  }
+
+  /**
+   * Atomically restock a vehicle by incrementing quantity
+   * 
+   * @param id - Vehicle ID
+   * @param quantity - Quantity to add to stock
+   * @returns Updated vehicle
+   * @throws Error if vehicle not found
+   */
+  restockAtomic(id: number, quantity: number): Vehicle {
+    // Atomic UPDATE: Increment quantity
+    const result = db.run(
+      `UPDATE vehicles 
+       SET quantity = quantity + ? 
+       WHERE id = ?`,
+      Number(quantity),
+      id
+    );
+
+    if (result.changes === 0) {
+      throw new Error('Vehicle not found');
+    }
+
+    const updatedVehicle = this.findById(id);
+    if (!updatedVehicle) {
+      throw new Error('Vehicle not found after restock');
+    }
+
+    return updatedVehicle;
   }
 }
 

@@ -1,16 +1,18 @@
 /**
  * Vehicle Controller
  * Handles HTTP requests for vehicle inventory operations
+ * Uses JWT authentication via middleware
  */
 
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import vehicleService from '../services/vehicleService';
+import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
 class VehicleController {
-  getAll = (req: Request, res: Response): void => {
+  getAll = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
-      vehicleService.getAllVehicles();
+      // User email from JWT token (verified by middleware)
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -21,9 +23,9 @@ class VehicleController {
     }
   };
 
-  search = (req: Request, res: Response): void => {
+  search = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -43,9 +45,9 @@ class VehicleController {
     }
   };
 
-  create = (req: Request, res: Response): void => {
+  create = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -58,9 +60,9 @@ class VehicleController {
     }
   };
 
-  update = (req: Request, res: Response): void => {
+  update = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -74,9 +76,9 @@ class VehicleController {
     }
   };
 
-  delete = (req: Request, res: Response): void => {
+  delete = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -90,9 +92,9 @@ class VehicleController {
     }
   };
 
-  purchase = (req: Request, res: Response): void => {
+  purchase = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;
@@ -107,9 +109,9 @@ class VehicleController {
     }
   };
 
-  restock = (req: Request, res: Response): void => {
+  restock = (req: AuthenticatedRequest, res: Response): void => {
     try {
-      const userEmail = req.headers['x-user-email'] as string | undefined;
+      const userEmail = req.user?.emailId;
       if (!userEmail) {
         res.status(401).json({ message: 'User authentication required.' });
         return;

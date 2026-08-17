@@ -1,73 +1,156 @@
-"use strict";
+import bcrypt from 'bcrypt';
+import userRepository from '../repositories/userRepository';
+import { generateToken } from '../utils/jwtUtils';
+
 /**
  * Authentication Service
- * Handles all authentication-related business logic
- * Encapsulates auth validation and user creation logic
+ *
+ * Handles:
+ * - User registration
+ * - Password hashing
+ * - Password verification
+ * - User login
+ * - JWT generation
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const userRepository_1 = __importDefault(require("../repositories/userRepository"));
 class AuthService {
-    /**
-     * Register a new user
-     * @param userData - User registration data
-     * @returns Created user (without password)
-     * @throws Error if user already exists or validation fails
-     */
-    register(userData) {
-        const { username, emailId, password } = userData;
-        // Validate required fields
-        if (!username || !emailId || !password) {
-            throw new Error('Username, emailId and password are required.');
-        }
-        // Check if user already exists
-        const existingUser = userRepository_1.default.findByEmail(emailId);
-        if (existingUser) {
-            throw new Error('User already registered. Please login.');
-        }
-        // Create the user
-        const createdUser = userRepository_1.default.create({ ...userData, role: userData.role ?? 'user' });
-        // Return user without password
-        return this.sanitizeUser(createdUser);
+  /**
+   * Hash a password using bcrypt.
+   */
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+
+    return bcrypt.hash(password, saltRounds);
+  }
+
+  /**
+   * Compare plain-text password with bcrypt hash.
+   */
+  async comparePassword(
+    password: string,
+    hash: string
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hash);
+  }
+
+  /**
+   * Register a new user.
+   */
+  async register(userData: {
+    username: string;
+    emailId: string;
+    password: string;
+    role?: string;
+  }) {
+    const {
+      username,
+      emailId,
+      password,
+    } = userData;
+
+    // Validate required fields
+    if (!username || !emailId || !password) {
+      throw new Error(
+        'Username, emailId and password are required.'
+      );
     }
-    /**
-     * Authenticate a user with email and password
-     * @param emailId - User email
-     * @param password - User password
-     * @returns Authenticated user (without password)
-     * @throws Error if user not found or password is incorrect
-     */
-    login(emailId, password) {
-        // Validate required fields
-        if (!emailId || !password) {
-            throw new Error('Email and password are required.');
-        }
-        // Find user by email
-        const user = userRepository_1.default.findByEmail(emailId);
-        if (!user) {
-            throw new Error('User is not registered. Please register first.');
-        }
-        // Verify password
-        if (user.password !== password) {
-            throw new Error('Incorrect password. Please try again.');
-        }
-        // Return user without password
-        return this.sanitizeUser(user);
+
+    // Validate password strength
+    if (password.length < 6) {
+      throw new Error(
+        'Password must be at least 6 characters long.'
+      );
     }
-    /**
-     * Remove sensitive information from user object
-     * @param user - User object with sensitive data
-     * @returns User object without password
-     */
-    sanitizeUser(user) {
-        return {
-            id: user.id,
-            username: user.username,
-            emailId: user.emailId,
-            role: user.role,
-        };
+
+    // Check whether user already exists
+    const existingUser =
+      userRepository.findByEmail(emailId);
+
+    if (existingUser) {
+      throw new Error(
+        'User already registered. Please login.'
+      );
     }
+
+    // Hash password
+    const hashedPassword =
+      await this.hashPassword(password);
+
+    // Create user
+    const createdUser = userRepository.create({
+      username,
+      emailId,
+      password: hashedPassword,
+      role: userData.role ?? 'user',
+    });
+
+    // Generate JWT
+    const token = generateToken(createdUser);
+
+    return {
+      message: 'Registration successful',
+      user: this.sanitizeUser(createdUser),
+      token,
+    };
+  }
+
+  /**
+   * Authenticate user using email and password.
+   */
+  async login(
+    emailId: string,
+    password: string
+  ) {
+    // Validate required fields
+    if (!emailId || !password) {
+      throw new Error(
+        'Email and password are required.'
+      );
+    }
+
+    // Find user by email
+    const user =
+      userRepository.findByEmail(emailId);
+
+    if (!user) {
+      throw new Error(
+        'Invalid credentials. Please check your email and password.'
+      );
+    }
+
+    // Verify password against bcrypt hash
+    const passwordMatch =
+      await this.comparePassword(
+        password,
+        user.password
+      );
+
+    if (!passwordMatch) {
+      throw new Error(
+        'Invalid credentials. Please check your email and password.'
+      );
+    }
+
+    // Generate JWT
+    const token = generateToken(user);
+
+    return {
+      message: 'Login successful',
+      user: this.sanitizeUser(user),
+      token,
+    };
+  }
+
+  /**
+   * Remove password from user response.
+   */
+  sanitizeUser(user: any) {
+    return {
+      id: user.id,
+      username: user.username,
+      emailId: user.emailId,
+      role: user.role,
+    };
+  }
 }
-exports.default = new AuthService();
+
+export default new AuthService();

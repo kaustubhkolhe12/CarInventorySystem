@@ -84,11 +84,9 @@ class VehicleService {
       throw new Error('Purchase quantity must be greater than zero.');
     }
 
-    if (requestedQuantity > vehicle.quantity) {
-      throw new Error('Requested quantity exceeds available stock.');
-    }
-
-    return vehicleRepository.update(id, { quantity: vehicle.quantity - requestedQuantity });
+    // Use atomic purchase to prevent race conditions
+    // This ensures no two concurrent purchases can oversell
+    return vehicleRepository.purchaseAtomic(id, requestedQuantity);
   }
 
   restockVehicle(userEmail: string, id: number, quantity: number): Vehicle {
@@ -101,7 +99,8 @@ class VehicleService {
       throw new Error('Restock quantity must be greater than zero.');
     }
 
-    return vehicleRepository.update(id, { quantity: vehicle.quantity + restockQuantity });
+    // Use atomic restock operation
+    return vehicleRepository.restockAtomic(id, restockQuantity);
   }
 
   private ensureAuthorizedUser(userEmail: string, action: string): void {

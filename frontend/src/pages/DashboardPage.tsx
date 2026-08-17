@@ -5,7 +5,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addAdminUser } from '../services/authService';
+import { addAdminUser, logoutUser } from '../services/authService';
 import {
   createVehicle,
   deleteVehicle,
@@ -15,7 +15,7 @@ import {
   updateVehicle,
 } from '../services/vehicleService';
 import type { Vehicle, VehicleFormState } from '../types/vehicle';
-import { clearUser, getUser } from '../utils/storage';
+import { getUser } from '../utils/storage';
 import type { User } from '../types/auth';
 
 interface DashboardPageProps {
@@ -88,7 +88,7 @@ export default function DashboardPage({ onLogout }: DashboardPageProps) {
   const totalInventory = vehicles.reduce((sum, vehicle) => sum + vehicle.quantity, 0);
 
   const handleLogout = () => {
-    clearUser();
+    logoutUser();
     if (onLogout) {
       onLogout();
     }

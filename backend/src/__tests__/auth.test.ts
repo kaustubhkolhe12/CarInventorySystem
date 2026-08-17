@@ -37,6 +37,7 @@ describe('Authentication API', () => {
   /**
    * Test: Login with unregistered email
    * Verifies appropriate error message for non-existent user
+   * Updated: Returns generic "Invalid credentials" to prevent user enumeration
    */
   it('returns not registered message for unknown email login', async () => {
     const response = await request(app).post('/api/auth/login').send({
@@ -44,13 +45,15 @@ describe('Authentication API', () => {
       password: 'anypass',
     });
 
-    expect(response.status).toBe(404);
-    expect(response.body.message).toBe('User is not registered. Please register first.');
+    // Now returns 401 with generic message to prevent user enumeration attacks
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Invalid credentials. Please check your email and password.');
   });
 
   /**
    * Test: Login with incorrect password
    * Verifies appropriate error message for wrong password
+   * Updated: Returns generic "Invalid credentials" to prevent user enumeration
    */
   it('returns incorrect password message for valid email with wrong password', async () => {
     const email = `wrong-pass-${Date.now()}@dealership.com`;
@@ -69,6 +72,6 @@ describe('Authentication API', () => {
     });
 
     expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Incorrect password. Please try again.');
+    expect(response.body.message).toBe('Invalid credentials. Please check your email and password.');
   });
 });

@@ -15,6 +15,7 @@ export interface User {
 export interface AuthResponse {
   message: string;
   user: User;
+  token: string;
 }
 
 /** Login/Register form data */

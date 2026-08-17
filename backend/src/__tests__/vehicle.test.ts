@@ -6,12 +6,25 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { app } from '../app';
+import { generateToken } from '../utils/jwtUtils';
+
+const adminUser = {
+  id: 1,
+  emailId: 'kaustubhkolhe12@gmail.com',
+  role: 'admin' as const,
+};
+
+// Helper to get authorization header with JWT token
+const getAuthHeader = () => {
+  const token = generateToken(adminUser);
+  return `Bearer ${token}`;
+};
 
 describe('Vehicle inventory API', () => {
   it('ensures the catalog contains at least 25 default vehicles after startup', async () => {
     const response = await request(app)
       .get('/api/vehicles')
-      .set('x-user-email', 'kaustubhkolhe12@gmail.com');
+      .set('Authorization', getAuthHeader());
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThanOrEqual(25);
@@ -20,18 +33,16 @@ describe('Vehicle inventory API', () => {
   it('seeds 25 default vehicles into the catalog when the database is empty', async () => {
     const response = await request(app)
       .get('/api/vehicles')
-      .set('x-user-email', 'kaustubhkolhe12@gmail.com');
+      .set('Authorization', getAuthHeader());
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThanOrEqual(25);
   });
 
   it('stores and returns vehicle image URLs when creating a vehicle', async () => {
-    const adminEmail = 'kaustubhkolhe12@gmail.com';
-
     const createResponse = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Mazda',
         model: 'MX-5',
@@ -46,11 +57,9 @@ describe('Vehicle inventory API', () => {
   });
 
   it('adds, lists, searches, updates, purchases, restocks, and deletes vehicles', async () => {
-    const adminEmail = 'kaustubhkolhe12@gmail.com';
-
     const createResponse = await request(app)
       .post('/api/vehicles')
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({
         make: 'Toyota',
         model: 'Corolla',
@@ -66,7 +75,7 @@ describe('Vehicle inventory API', () => {
 
     const listResponse = await request(app)
       .get('/api/vehicles')
-      .set('x-user-email', adminEmail);
+      .set('Authorization', getAuthHeader());
 
     expect(listResponse.status).toBe(200);
     expect(listResponse.body.some((vehicle: any) => vehicle.id === vehicleId)).toBe(true);
@@ -74,14 +83,14 @@ describe('Vehicle inventory API', () => {
     const searchResponse = await request(app)
       .get('/api/vehicles/search')
       .query({ make: 'Toyota', category: 'Sedan', minPrice: 20000, maxPrice: 30000 })
-      .set('x-user-email', adminEmail);
+      .set('Authorization', getAuthHeader());
 
     expect(searchResponse.status).toBe(200);
     expect(searchResponse.body.some((vehicle: any) => vehicle.model === 'Corolla')).toBe(true);
 
     const updateResponse = await request(app)
       .put(`/api/vehicles/${vehicleId}`)
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({ price: 27000, quantity: 4 });
 
     expect(updateResponse.status).toBe(200);
@@ -90,7 +99,7 @@ describe('Vehicle inventory API', () => {
 
     const purchaseResponse = await request(app)
       .post(`/api/vehicles/${vehicleId}/purchase`)
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({ quantity: 2 });
 
     expect(purchaseResponse.status).toBe(200);
@@ -98,7 +107,7 @@ describe('Vehicle inventory API', () => {
 
     const restockResponse = await request(app)
       .post(`/api/vehicles/${vehicleId}/restock`)
-      .set('x-user-email', adminEmail)
+      .set('Authorization', getAuthHeader())
       .send({ quantity: 3 });
 
     expect(restockResponse.status).toBe(200);
@@ -106,7 +115,7 @@ describe('Vehicle inventory API', () => {
 
     const deleteResponse = await request(app)
       .delete(`/api/vehicles/${vehicleId}`)
-      .set('x-user-email', adminEmail);
+      .set('Authorization', getAuthHeader());
 
     expect(deleteResponse.status).toBe(200);
     expect(deleteResponse.body.message).toBe('Vehicle deleted successfully');
